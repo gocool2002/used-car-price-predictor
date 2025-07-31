@@ -104,10 +104,11 @@ input_df = pd.DataFrame([features])
 
 # --- Prediction ---
 if st.button("Predict Price"):
-    transformed_input = poly.transform(input_df)
-    predicted_price = model.predict(transformed_input)[0]
-    st.success(f"Estimated Car Price: **${predicted_price:,.2f}**")
+	try:
+		transformed_input = poly.transform(input_df)
+		predicted_price = model.predict(transformed_input)[0]
+		st.success(f"Estimated Car Price: **${predicted_price:,.2f}**")
 
-    except Exception as e:
-        st.error(f"Error in prediction: {e}")
+	except Exception as e:
+        	st.error(f"Error in prediction: {e}")
 
