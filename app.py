@@ -12,10 +12,6 @@ with open('ridge_model.pkl', 'rb') as f:
 with open('poly.pkl', 'rb') as f:
     poly = pickle.load(f)
 
-# Load the expected columns
-with open('feature_columns.pkl', 'rb') as f:
-    expected_columns = pickle.load(f)
-
 # --- Brand Bucketing Function ---
 super_luxury = ['Rolls-Royce', 'Bentley', 'Ferrari', 'Lamborghini', 'Bugatti', 'McLaren', 'Aston']
 
@@ -106,25 +102,13 @@ for clr in ['blue', 'brown', 'yellow', 'green', 'red', 'silver', 'gray', 'white'
 # Create DataFrame for model input
 input_df = pd.DataFrame([features])
 
-# Encode user input
-input_df = pd.get_dummies(input_df)
-
-# Add any missing columns
-for col in expected_columns:
-    if col not in input_df.columns:
-        input_df[col] = 0
-
-# Drop extra columns (e.g., if user selected a value not seen in training)
-input_df = input_df[expected_columns]
-
-
 # --- Prediction ---
 if st.button("Predict Price"):
-	try:
-		transformed_input = poly.transform(input_df)
-		predicted_price = model.predict(transformed_input)[0]
-		st.success(f"Estimated Car Price: **${predicted_price:,.2f}**")
+    transformed_input = poly.transform(input_df)
+    predicted_log_price = model.predict(transformed_input)[0]
+    predicted_price = np.exp(predicted_log_price)
+    st.success(f"Estimated Car Price: **${predicted_price:,.2f}**")
 
-	except Exception as e:
-        	st.error(f"Error in prediction: {e}")
+    except Exception as e:
+        st.error(f"Error in prediction: {e}")
 
