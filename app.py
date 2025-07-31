@@ -12,6 +12,9 @@ with open('ridge_model.pkl', 'rb') as f:
 with open('poly.pkl', 'rb') as f:
     poly = pickle.load(f)
 
+with open('feature_columns.pkl', 'rb') as f:
+    expected_cols = pickle.load(f)
+
 # --- Brand Bucketing Function ---
 super_luxury = ['Rolls-Royce', 'Bentley', 'Ferrari', 'Lamborghini', 'Bugatti', 'McLaren', 'Aston']
 
@@ -101,6 +104,15 @@ for clr in ['blue', 'brown', 'yellow', 'green', 'red', 'silver', 'gray', 'white'
 
 # Create DataFrame for model input
 input_df = pd.DataFrame([features])
+
+# Add missing columns with 0
+for col in expected_cols:
+    if col not in input_df.columns:
+        input_df[col] = 0
+
+# Keep only expected columns and in the correct order
+input_df = input_df[expected_cols]
+
 
 # --- Prediction ---
 if st.button("Predict Price"):
